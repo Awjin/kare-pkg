@@ -1,0 +1,9 @@
+.DS_Store
+build/
+node_modules/
+test/e2e/reports/
+test/unit/coverage/
+npm-debug.log*
+selenium-debug.log*
+yarn-debug.log*
+yarn-error.log*
