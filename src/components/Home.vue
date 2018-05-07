@@ -9,14 +9,14 @@
     <drawing-board
       v-for="(drawing, idx) in drawings"
       :key="idx"
-      :drawing="drawing"
+      :drawingIdx="idx"
       >
     </drawing-board>
   </div>
 </template>
 
 <script>
-  import DrawingBoard from './DrawingBoard/DrawingBoard.vue'
+  import DrawingBoard from './DrawingBoard.vue'
 
   export default {
     name: 'Home',
@@ -25,13 +25,15 @@
       DrawingBoard: DrawingBoard
     },
 
-    data () {
+    data() {
       return {
-        drawings: this.$store.state.drawings
       }
     },
 
     computed: {
+      drawings: function() {
+        return this.$store.state.drawings;
+      }
     },
 
     methods: {

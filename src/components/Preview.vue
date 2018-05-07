@@ -15,8 +15,14 @@
     name: 'Preview',
 
     props: [
-      'pixels'
-    ]
+      'drawingIdx'
+    ],
+
+    data() {
+      return {
+        pixels: this.$store.state.drawings[this.drawingIdx].pixels
+      }
+    }
   }
 </script>
 
@@ -29,7 +35,11 @@
     grid-template-rows: repeat(32, 1fr);
   }
 
-  .filled {
+  .pixel {
+    background: var(--color-light);
+  }
+
+  .pixel.filled {
     background: var(--color-dark);
   }
 </style>

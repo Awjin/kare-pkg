@@ -17,6 +17,7 @@
 
   html {
     font: 14px / 1.5 'Helvetica Neue', sans-serif;
+    letter-spacing: .05rem;
   }
 
   * {

@@ -5,10 +5,6 @@
     @touchstart.prevent="trackStart"
     @mouseover.prevent="trackMove"
     @touchmove.prevent="trackMove"
-    @mouseleave="trackEnd"
-    @mouseup="trackEnd"
-    @touchcancel="trackEnd"
-    @touchend="trackEnd"
     >
     <div
       v-for="i in 1024"
@@ -25,11 +21,12 @@
     name: 'Editor',
 
     props: [
-      'pixels'
+      'drawingIdx'
     ],
 
     data () {
       return {
+        pixels: this.$store.state.drawings[this.drawingIdx].pixels,
         isDrawing: false,
         isFilling: false
       }
@@ -39,38 +36,52 @@
       trackStart: function({target}) {
         const idx = target.dataset.pixelIdx;
         if (idx === undefined) return;
-
         this.isDrawing = true;
         this.isFilling = !this.pixels[idx];
-
         this.toggleFill(idx);
       },
 
-      toggleFill: function(idx) {
-        this.$set(this.pixels, idx, this.isFilling);
+      toggleFill: function(pixelIdx) {
+        this.$store.dispatch('updateDrawing', {
+          drawingIdx: this.drawingIdx,
+          pixelIdx: pixelIdx,
+          value: this.isFilling
+        });
       },
 
       trackMove: function(event) {
         if (!this.isDrawing) return;
+        const target = this.getTarget(event);
+        this.toggleFill(target.dataset.pixelIdx);
+      },
 
-        let target;
-        if (event.type === 'mouseover') {
-          target = event.target;
-        } else if (event.type === 'touchmove') {
+      getTarget: function(event) {
+        if (event.type === 'touchmove') {
           const currTouch = event.changedTouches[0];
-          target = document.elementFromPoint(
+          return document.elementFromPoint(
             currTouch.clientX,
             currTouch.clientY
           );
+        } else {
+          return event.target;
         }
-
-        const idx = target.dataset.pixelIdx;
-        this.toggleFill(idx);
       },
 
       trackEnd: function() {
         this.isDrawing = false;
       }
+    },
+
+    created: function() {
+      window.addEventListener('mouseup', this.trackEnd);
+      window.addEventListener('touchcancel', this.trackEnd);
+      window.addEventListener('touchend', this.trackEnd);
+    },
+
+    destroyed: function() {
+      window.removeEventListener('mouseup', this.trackEnd);
+      window.removeEventListener('touchcancel', this.trackEnd);
+      window.removeEventListener('touchend', this.trackEnd);
     }
   }
 </script>
@@ -91,6 +102,6 @@
   }
 
   .pixel.filled {
-    background: none;
+    background: var(--color-dark);
   }
 </style>
