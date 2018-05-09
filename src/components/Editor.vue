@@ -9,8 +9,8 @@
     <div
       v-for="i in 1024"
       class="pixel"
-      :class="{filled: pixels[i]}"
-      :data-pixel-idx="i"
+      :class="{filled: pixels[i - 1]}"
+      :data-pixel-idx="i - 1"
       >
     </div>
   </div>

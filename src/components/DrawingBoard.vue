@@ -31,13 +31,10 @@
     methods: {
       clearDrawing: function(event) {
         event.target.blur();
-        const response = window.confirm("Are you sure? This can't be undone");
-        if (response) {
-          this.$store.dispatch('clearDrawing', {drawingIdx: this.drawingIdx});
-        }
+        this.$store.dispatch('clearDrawing', {drawingIdx: this.drawingIdx});
       }
     }
-  }
+  };
 </script>
 
 <style scoped>
