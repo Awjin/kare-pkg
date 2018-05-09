@@ -79,18 +79,11 @@
 
 <style scoped>
   .preview {
-    background: var(--color-light);
-    border: 2px solid var(--color-dark);
-    display: grid;
-    grid-template-columns: repeat(32, 1fr);
-    grid-template-rows: repeat(32, 1fr);
+    background: white;
+    border: 2px solid black;
   }
 
-  .pixel {
-    background: var(--color-light);
-  }
-
-  .pixel.filled {
-    background: var(--color-dark);
+  img {
+    width: 100%;
   }
 </style>

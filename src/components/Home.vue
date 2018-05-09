@@ -54,8 +54,8 @@
 
   header {
     align-items: center;
-    background: var(--color-dark);
-    color: var(--color-light);
+    background: black;
+    color: white;
     padding: 1rem 0;
     width: 100%;
   }

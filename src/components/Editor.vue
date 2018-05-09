@@ -83,25 +83,26 @@
       window.removeEventListener('touchcancel', this.trackEnd);
       window.removeEventListener('touchend', this.trackEnd);
     }
-  }
+  };
 </script>
 
 <style scoped>
   .editor {
-    background: var(--color-dark);
+    border: 2px solid black;
     cursor: pointer;
     display: grid;
-    grid-gap: 1px;
     grid-template-columns: repeat(32, 1fr);
     grid-template-rows: repeat(32, 1fr);
-    padding: 2px;
   }
 
   .pixel {
-    background: var(--color-light);
+    background: white;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
   }
 
   .pixel.filled {
-    background: var(--color-dark);
+    background: black;
+    border-color: black;
   }
 </style>

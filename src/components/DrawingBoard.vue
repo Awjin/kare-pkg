@@ -65,10 +65,10 @@
   }
 
   button {
-    background: var(--color-dark);
+    background: black;
     border: none;
     border-radius: 5px;
-    color: var(--color-light);
+    color: white;
     cursor: pointer;
     letter-spacing: .05rem;
     padding: .55rem .75rem .65rem .75rem;
