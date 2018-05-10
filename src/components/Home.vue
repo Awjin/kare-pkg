@@ -1,11 +1,5 @@
 <template>
   <div class="home">
-    <header>
-      <div class="header-inner">
-        kare.pkg
-      </div>
-    </header>
-
     <!-- <div class="wrapper">
       <a
         v-for="(drawing, idx) in drawings"
@@ -28,13 +22,15 @@
 <script>
   import DrawingBoard from './DrawingBoard.vue'
   import Preview from './Preview.vue'
+  import SiteHeader from './SiteHeader.vue'
 
   export default {
     name: 'Home',
 
     components: {
       DrawingBoard: DrawingBoard,
-      Preview: Preview
+      Preview: Preview,
+      SiteHeader: SiteHeader
     },
 
     data() {
@@ -50,19 +46,6 @@
   a:focus,
   a:hover {
     transform: rotate(5deg);
-  }
-
-  header {
-    align-items: center;
-    background: black;
-    color: white;
-    padding: 1rem 0;
-    width: 100%;
-  }
-
-  .header-inner {
-    margin: auto;
-    max-width: 94vmin;
   }
 
   .preview {

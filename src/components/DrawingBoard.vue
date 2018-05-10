@@ -1,50 +1,97 @@
 <template>
   <div class="drawingBoard">
-    <preview :drawingIdx="drawingIdx"></preview>
+    <site-header>
+      <div>
+        <button
+          @click="undo"
+          :disabled="isUndoable"
+          >
+          &lsh;
+        </button>
 
-    <div>
-      <editor :drawingIdx="drawingIdx"></editor>
+        <button
+          @click="redo"
+          :disabled="isRedoable"
+          >
+          &rsh;
+        </button>
 
-      <div class="controls">
-        <button @click="clearDrawing">clear</button>
+        <button
+          @click="clearDrawing"
+          :disabled="isClearable"
+          >
+          clear
+        </button>
       </div>
-    </div>
+    </site-header>
+
+    <main>
+      <preview :drawingIdx="drawingIdx"></preview>
+
+      <editor :drawingIdx="drawingIdx"></editor>
+    </main>
   </div>
 </template>
 
 <script>
   import Editor from './Editor.vue'
   import Preview from './Preview.vue'
+  import SiteHeader from './SiteHeader.vue'
 
   export default {
     name: 'DrawingBoard',
 
     components: {
       Editor: Editor,
-      Preview: Preview
+      Preview: Preview,
+      SiteHeader: SiteHeader
     },
 
     props: [
       'drawingIdx'
     ],
 
+    computed: {
+      isClearable: function() {
+        return false;
+      },
+
+      isUndoable: function() {
+        return false;
+      },
+
+      isRedoable: function() {
+        return false;
+      }
+    },
+
     methods: {
       clearDrawing: function(event) {
         event.target.blur();
-        this.$store.dispatch('clearDrawing', {drawingIdx: this.drawingIdx});
+        this.$store.commit('clearDrawing', {drawingIdx: this.drawingIdx});
+      },
+
+      undo: function(event) {
+        event.target.blur();
+        this.$store.commit('undo', {drawingIdx: this.drawingIdx});
+      },
+
+      redo: function(event) {
+        event.target.blur();
+        this.$store.commit('redo', {drawingIdx: this.drawingIdx});
       }
     }
   };
 </script>
 
 <style scoped>
-  .drawingBoard {
+  main {
     display: flex;
     justify-content: center;
     padding: 3vmin;
   }
 
-  .drawingBoard > * {
+  main > * {
     flex-shrink: 0;
   }
 
@@ -57,29 +104,5 @@
   .editor {
     height: 74vmin;
     width: 74vmin;
-  }
-
-  .controls {
-    margin-top: 2vmin;
-    text-align: center;
-  }
-
-  button {
-    background: black;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-    letter-spacing: .05rem;
-    padding: .55rem .75rem .65rem .75rem;
-  }
-
-  button:hover,
-  button:focus {
-    opacity: .5;
-  }
-
-  button:active {
-    outline: none;
   }
 </style>
