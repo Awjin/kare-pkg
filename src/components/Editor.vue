@@ -36,13 +36,19 @@
       trackStart: function({target}) {
         const idx = target.dataset.pixelIdx;
         if (idx === undefined) return;
+
         this.isDrawing = true;
         this.isFilling = !this.pixels[idx];
+
+        this.$store.commit('startAction', {drawingIdx: this.drawingIdx});
         this.toggleFill(idx);
       },
 
       toggleFill: function(pixelIdx) {
-        this.$store.dispatch('updateDrawing', {
+        const shouldToggle = this.pixels[pixelIdx] != this.isFilling;
+        if (!shouldToggle) return;
+
+        this.$store.commit('updateDrawing', {
           drawingIdx: this.drawingIdx,
           pixelIdx: pixelIdx,
           value: this.isFilling
@@ -51,6 +57,7 @@
 
       trackMove: function(event) {
         if (!this.isDrawing) return;
+
         const target = this.getTarget(event);
         this.toggleFill(target.dataset.pixelIdx);
       },

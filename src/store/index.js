@@ -33,7 +33,7 @@ export default new Vuex.Store({
         },
 
         history: {
-          idx: 0,
+          currIdx: -1,
           actions: []
         }
       },
@@ -50,7 +50,7 @@ export default new Vuex.Store({
         },
 
         history: {
-          idx: 0,
+          currIdx: -1,
           actions: []
         }
       },
@@ -73,38 +73,72 @@ export default new Vuex.Store({
         },
 
         history: {
-          idx: 0,
+          currIdx: -1,
           actions: []
         }
       }
     ]
   },
 
-  actions: {
-    clearDrawing(context, {drawingIdx}) {
-      const pixels = context.state.drawings[drawingIdx].pixels;
-      for (let pixelIdx in pixels) {
-        context.commit('setPixel', {
-          drawingIdx: drawingIdx,
-          pixelIdx: pixelIdx,
-          value: false
-        });
-      }
-    },
-
-    updateDrawing(context, payload) {
-      context.commit('setPixel', payload);
-      context.commit('addHistory', payload);
-    }
-  },
-
   mutations: {
-    setPixel(state, {drawingIdx, pixelIdx, value}) {
-      const pixels = state.drawings[drawingIdx].pixels;
-      Vue.set(pixels, pixelIdx, value);
+    startAction(state, {drawingIdx}) {
+      newAction(state, drawingIdx);
     },
 
-    addHistory(state, {}) {
+    updateDrawing(state, {drawingIdx, pixelIdx, value}) {
+      setPixel(state, drawingIdx, pixelIdx, value);
+    },
+
+    undo(state, {drawingIdx}) {
+      const history = state.drawings[drawingIdx].history;
+      if (history.currIdx < 0) return;
+
+      togglePixels(state, drawingIdx);
+      history.currIdx--;
+    },
+
+    redo(state, {drawingIdx}) {
+      const history = state.drawings[drawingIdx].history;
+      if (history.currIdx >= history.actions.length - 1) return;
+
+      history.currIdx++;
+      togglePixels(state, drawingIdx);
+    },
+
+    clearDrawing(state, {drawingIdx}) {
+      newAction(state, drawingIdx);
+
+      const pixels = state.drawings[drawingIdx].pixels;
+      for (let pixelIdx in pixels) {
+        if (pixels[pixelIdx]) {
+          setPixel(state, drawingIdx, pixelIdx, false);
+        }
+      }
     }
   }
 })
+
+function newAction(state, drawingIdx) {
+  const history = state.drawings[drawingIdx].history;
+  const pruneCount = history.actions.length - (history.currIdx + 1);
+  history.actions.splice(history.currIdx, pruneCount);
+  history.actions.push([]);
+  history.currIdx++;
+}
+
+function setPixel(state, drawingIdx, pixelIdx, value) {
+  const drawing = state.drawings[drawingIdx];
+  Vue.set(drawing.pixels, pixelIdx, value);
+
+  const currAction = drawing.history.actions[drawing.history.currIdx];
+  currAction.push(pixelIdx);
+}
+
+function togglePixels(state, drawingIdx) {
+  const drawing = state.drawings[drawingIdx]
+  const pixelsToToggle = drawing.history.actions[drawing.history.currIdx];
+  const currFill = drawing.pixels[pixelsToToggle[0]];
+  pixelsToToggle.forEach((pixelIdx) => {
+    Vue.set(drawing.pixels, pixelIdx, !currFill);
+  });
+}
