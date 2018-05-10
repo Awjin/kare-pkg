@@ -47,7 +47,7 @@
   }
 
   button[disabled] {
-    color: #888;
+    color: #999;
     cursor: default;
   }
 
@@ -56,5 +56,4 @@
   button[disabled]:hover {
     border-color: transparent;
   }
-
 </style>

@@ -33,7 +33,7 @@
     },
 
     methods: {
-      trackStart: function({target}) {
+      trackStart({target}) {
         const idx = target.dataset.pixelIdx;
         if (idx === undefined) return;
 
@@ -44,7 +44,7 @@
         this.toggleFill(idx);
       },
 
-      toggleFill: function(pixelIdx) {
+      toggleFill(pixelIdx) {
         const shouldToggle = this.pixels[pixelIdx] != this.isFilling;
         if (!shouldToggle) return;
 
@@ -55,14 +55,14 @@
         });
       },
 
-      trackMove: function(event) {
+      trackMove(event) {
         if (!this.isDrawing) return;
 
         const target = this.getTarget(event);
         this.toggleFill(target.dataset.pixelIdx);
       },
 
-      getTarget: function(event) {
+      getTarget(event) {
         if (event.type === 'touchmove') {
           const currTouch = event.changedTouches[0];
           return document.elementFromPoint(
@@ -74,18 +74,18 @@
         }
       },
 
-      trackEnd: function() {
+      trackEnd() {
         this.isDrawing = false;
       }
     },
 
-    created: function() {
+    created() {
       window.addEventListener('mouseup', this.trackEnd);
       window.addEventListener('touchcancel', this.trackEnd);
       window.addEventListener('touchend', this.trackEnd);
     },
 
-    destroyed: function() {
+    destroyed() {
       window.removeEventListener('mouseup', this.trackEnd);
       window.removeEventListener('touchcancel', this.trackEnd);
       window.removeEventListener('touchend', this.trackEnd);

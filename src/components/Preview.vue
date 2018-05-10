@@ -16,7 +16,7 @@
 
     data() {
       return {
-        canvas: '',
+        canvas: null,
         resolution: this.propResolution || 32,
         scale: this.propScale || 10,
         pixels: this.$store.state.drawings[this.drawingIdx].pixels
@@ -24,16 +24,16 @@
     },
 
     computed: {
-      canvasSize: function() {
+      canvasSize() {
         return this.resolution * this.scale;
       },
 
-      imgSrc: function() {
-        this.updateImg;
+      imgSrc() {
+        this.pixelsToCanvas;
         return this.canvas.toDataURL('image/png');
       },
 
-      updateImg: function() {
+      pixelsToCanvas() {
         const context = this.canvas.getContext('2d');
 
         for (let pixelIdx in this.pixels) {
@@ -53,7 +53,7 @@
     },
 
     methods: {
-      initCanvas: function() {
+      initCanvas() {
         const canvas = document.createElement('canvas');
         canvas.height = this.canvasSize;
         canvas.width = this.canvasSize;
@@ -67,11 +67,11 @@
       }
     },
 
-    created: function() {
+    created() {
       this.initCanvas();
     },
 
-    destroyed: function() {
+    destroyed() {
       this.canvas.remove();
     }
   };

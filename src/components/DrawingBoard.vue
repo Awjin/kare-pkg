@@ -2,24 +2,15 @@
   <div class="drawingBoard">
     <site-header>
       <div>
-        <button
-          @click="undo"
-          :disabled="isNotUndoable"
-          >
+        <button @click="undo" :disabled="isNotUndoable">
           undo
         </button>
 
-        <button
-          @click="redo"
-          :disabled="isNotRedoable"
-          >
+        <button @click="redo" :disabled="isNotRedoable">
           redo
         </button>
 
-        <button
-          @click="clearDrawing"
-          :disabled="isNotClearable"
-          >
+        <button @click="clear" :disabled="isNotClearable">
           clear
         </button>
       </div>
@@ -52,7 +43,7 @@
     ],
 
     computed: {
-      isNotClearable: function() {
+      isNotClearable() {
         const pixels = this.$store.state.drawings[this.drawingIdx].pixels;
         for (let pixelIdx in pixels) {
           if (pixels[pixelIdx]) return false;
@@ -60,31 +51,31 @@
         return true;
       },
 
-      isNotUndoable: function() {
+      isNotUndoable() {
         const history = this.$store.state.drawings[this.drawingIdx].history;
         return (history.currIdx < 0);
       },
 
-      isNotRedoable: function() {
+      isNotRedoable() {
         const history = this.$store.state.drawings[this.drawingIdx].history;
         return (history.currIdx >= history.actions.length - 1);
       }
     },
 
     methods: {
-      clearDrawing: function(event) {
-        event.target.blur();
+      clear({target}) {
+        target.blur();
         this.$store.commit('clearDrawing', {drawingIdx: this.drawingIdx});
       },
 
-      undo: function(event) {
-        event.target.blur();
-        this.$store.commit('undo', {drawingIdx: this.drawingIdx});
+      undo({target}) {
+        target.blur();
+        this.$store.commit('undoDrawing', {drawingIdx: this.drawingIdx});
       },
 
-      redo: function(event) {
-        event.target.blur();
-        this.$store.commit('redo', {drawingIdx: this.drawingIdx});
+      redo({target}) {
+        target.blur();
+        this.$store.commit('redoDrawing', {drawingIdx: this.drawingIdx});
       }
     }
   };

@@ -89,7 +89,7 @@ export default new Vuex.Store({
       setPixel(state, drawingIdx, pixelIdx, value);
     },
 
-    undo(state, {drawingIdx}) {
+    undoDrawing(state, {drawingIdx}) {
       const history = state.drawings[drawingIdx].history;
       if (history.currIdx < 0) return;
 
@@ -97,7 +97,7 @@ export default new Vuex.Store({
       history.currIdx--;
     },
 
-    redo(state, {drawingIdx}) {
+    redoDrawing(state, {drawingIdx}) {
       const history = state.drawings[drawingIdx].history;
       if (history.currIdx >= history.actions.length - 1) return;
 
