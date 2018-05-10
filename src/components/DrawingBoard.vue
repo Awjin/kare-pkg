@@ -4,21 +4,21 @@
       <div>
         <button
           @click="undo"
-          :disabled="isUndoable"
+          :disabled="isNotUndoable"
           >
-          &lsh;
+          undo
         </button>
 
         <button
           @click="redo"
-          :disabled="isRedoable"
+          :disabled="isNotRedoable"
           >
-          &rsh;
+          redo
         </button>
 
         <button
           @click="clearDrawing"
-          :disabled="isClearable"
+          :disabled="isNotClearable"
           >
           clear
         </button>
@@ -52,16 +52,22 @@
     ],
 
     computed: {
-      isClearable: function() {
-        return false;
+      isNotClearable: function() {
+        const pixels = this.$store.state.drawings[this.drawingIdx].pixels;
+        for (let pixelIdx in pixels) {
+          if (pixels[pixelIdx]) return false;
+        }
+        return true;
       },
 
-      isUndoable: function() {
-        return false;
+      isNotUndoable: function() {
+        const history = this.$store.state.drawings[this.drawingIdx].history;
+        return (history.currIdx < 0);
       },
 
-      isRedoable: function() {
-        return false;
+      isNotRedoable: function() {
+        const history = this.$store.state.drawings[this.drawingIdx].history;
+        return (history.currIdx >= history.actions.length - 1);
       }
     },
 

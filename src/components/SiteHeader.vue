@@ -1,7 +1,7 @@
 <template>
   <div class="site-header">
     <div class="header-inner">
-      <button>kare.pkg</button>
+      <button>KARE.pkg</button>
       <slot></slot>
     </div>
   </div>
@@ -30,22 +30,31 @@
 
   button {
     background: black;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 5px;
     color: white;
     cursor: pointer;
     letter-spacing: .05rem;
-    padding: .5rem .7rem .65rem .75rem;
+    padding: .5rem .66rem .66rem .66rem;
+    transition: color .2s ease;
   }
 
-  button:hover,
+  button:active,
   button:focus,
-  button:active {
+  button:hover {
     outline: none;
     border-color: white;
   }
 
   button[disabled] {
-    display: none;
+    color: #888;
+    cursor: default;
   }
+
+  button[disabled]:active,
+  button[disabled]:focus,
+  button[disabled]:hover {
+    border-color: transparent;
+  }
+
 </style>
