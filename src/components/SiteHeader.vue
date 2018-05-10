@@ -1,7 +1,10 @@
 <template>
   <div class="site-header">
     <div class="header-inner">
-      <button>KARE.pkg</button>
+      <router-link to="/">
+        <button>KARE.pkg</button>
+      </router-link>
+
       <slot></slot>
     </div>
   </div>
@@ -28,6 +31,10 @@
     margin: auto;
   }
 
+  a {
+    outline: none;
+  }
+
   button {
     background: black;
     border: 1px solid transparent;
@@ -35,6 +42,7 @@
     color: white;
     cursor: pointer;
     letter-spacing: .05rem;
+    outline: none;
     padding: .5rem .66rem .66rem .66rem;
     transition: color .2s ease;
   }
@@ -42,7 +50,6 @@
   button:active,
   button:focus,
   button:hover {
-    outline: none;
     border-color: white;
   }
 

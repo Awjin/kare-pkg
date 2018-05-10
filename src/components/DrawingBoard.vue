@@ -38,9 +38,11 @@
       SiteHeader: SiteHeader
     },
 
-    props: [
-      'drawingIdx'
-    ],
+    data() {
+      return {
+        drawingIdx: this.$route.params.id
+      }
+    },
 
     computed: {
       isNotClearable() {
