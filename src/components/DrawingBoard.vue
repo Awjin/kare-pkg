@@ -76,7 +76,37 @@
       redo({target}) {
         target.blur();
         this.$store.commit('redoDrawing', {drawingIdx: this.drawingIdx});
+      },
+
+      keyboardShortcut(event) {
+        const redoShortcut =
+          (event.keyCode == 90 && event.ctrlKey && event.shiftKey) ||
+          (event.keyCode == 90 && event.metaKey && event.shiftKey);
+
+        const undoShortcut =
+          (event.keyCode == 90 && event.ctrlKey) ||
+          (event.keyCode == 90 && event.metaKey);
+
+        const clearShortcut =
+          (event.keyCode == 88 && event.ctrlKey) ||
+          (event.keyCode == 88 && event.metaKey);
+
+        if (redoShortcut) {
+          this.redo(event);
+        } else if (undoShortcut) {
+          this.undo(event);
+        } else if (clearShortcut) {
+          this.clear(event);
+        }
       }
+    },
+
+    created() {
+      window.addEventListener('keydown', this.keyboardShortcut);
+    },
+
+    destroyed() {
+      window.removeEventListener('keydown', this.keyboardShortcut);
     }
   };
 </script>
