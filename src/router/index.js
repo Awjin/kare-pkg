@@ -12,10 +12,17 @@ export default new Router({
       name: 'Home',
       component: Home
     },
+
     {
-      path: '/edit/:id',
-      name: 'DrawingBoard',
-      component: DrawingBoard
+      path: '/edit/:drawingIdx',
+      name: 'Edit',
+      component: DrawingBoard,
+      props: true
+    },
+
+    {
+      path: '*',
+      component: Home
     }
   ]
 })

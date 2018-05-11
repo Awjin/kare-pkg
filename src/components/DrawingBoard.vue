@@ -65,11 +65,9 @@
       SiteHeader: SiteHeader
     },
 
-    data() {
-      return {
-        drawingIdx: this.$route.params.id
-      }
-    },
+    props: [
+      'drawingIdx'
+    ],
 
     computed: {
       isNotUndoable() {
