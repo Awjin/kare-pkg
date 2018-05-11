@@ -18,7 +18,7 @@
       return {
         canvas: null,
         resolution: this.propResolution || 32,
-        scale: this.propScale || 10,
+        scale: this.propScale || 20,
         pixels: this.$store.state.drawings[this.drawingIdx].pixels
       }
     },
@@ -29,31 +29,9 @@
       },
 
       imgSrc() {
-        this.pixelsToCanvas;
+        this.drawPixelsToCanvas();
+        this.updateImgSrc();
         return this.$store.state.drawings[this.drawingIdx].imgSrc;
-      },
-
-      pixelsToCanvas() {
-        const context = this.canvas.getContext('2d');
-
-        for (let pixelIdx in this.pixels) {
-          context.fillStyle = (this.pixels[pixelIdx]) ? 'black' : 'white';
-
-          const col = pixelIdx % this.resolution;
-          const row = Math.floor(pixelIdx / this.resolution);
-
-          context.fillRect(
-            col * this.scale,
-            row * this.scale,
-            this.scale,
-            this.scale
-          );
-        }
-
-        this.$store.commit('updateImgSrc', {
-          drawingIdx: this.drawingIdx,
-          imgSrc: this.canvas.toDataURL('image/png')
-        });
       }
     },
 
@@ -69,6 +47,31 @@
         context.fillStyle = 'black';
 
         this.canvas = canvas;
+      },
+
+      drawPixelsToCanvas() {
+        const context = this.canvas.getContext('2d');
+
+        for (let pixelIdx in this.pixels) {
+          context.fillStyle = (this.pixels[pixelIdx]) ? 'black' : 'white';
+
+          const col = pixelIdx % this.resolution;
+          const row = Math.floor(pixelIdx / this.resolution);
+
+          context.fillRect(
+            col * this.scale,
+            row * this.scale,
+            this.scale,
+            this.scale
+          );
+        }
+      },
+
+      updateImgSrc() {
+        this.$store.commit('updateImgSrc', {
+          drawingIdx: this.drawingIdx,
+          imgSrc: this.canvas.toDataURL('image/png')
+        });
       }
     },
 

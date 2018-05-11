@@ -46,6 +46,7 @@ export default new Vuex.Store({
     newDrawing(state) {
       state.drawings.unshift({
         pixels: {},
+        imgSrc: '',
         history: {
           currIdx: -1,
           actions: []

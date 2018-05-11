@@ -114,7 +114,6 @@
 
       saveDrawing({target}) {
         target.blur();
-        console.log(this.$store.state.drawings[this.drawingIdx].imgSrc);
       },
 
       deleteDrawing({target}) {
