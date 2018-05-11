@@ -88,6 +88,7 @@
 <style scoped>
   .preview {
     background: white;
+    border: 1px solid white;
   }
 
   img {

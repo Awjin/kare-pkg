@@ -6,12 +6,14 @@
     @mouseover.prevent="trackMove"
     @touchmove.prevent="trackMove"
     >
-    <div
-      v-for="i in 1024"
-      class="pixel"
-      :class="{filled: pixels[i - 1]}"
-      :data-pixel-idx="i - 1"
-      >
+    <div class="edit-area">
+      <div
+        v-for="i in 1024"
+        class="pixel"
+        :class="{filled: pixels[i - 1]}"
+        :data-pixel-idx="i - 1"
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -95,10 +97,20 @@
 
 <style scoped>
   .editor {
+    background: white;
+    padding: 1px;
+  }
+
+  .edit-area {
     cursor: pointer;
     display: grid;
     grid-template-columns: repeat(32, 1fr);
     grid-template-rows: repeat(32, 1fr);
+    height: 100%;
+    width: 100%;
+    border-right: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+
   }
 
   .pixel {

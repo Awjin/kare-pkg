@@ -5,11 +5,13 @@
       id="home"
       title="Home (cmd + /)"
       >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-        <path d="M0 0h24v24H0z" fill="none"/>
-      </svg>
-      kare.pkg
+      <span @click="blurParent">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          <path d="M0 0h24v24H0z" fill="none"/>
+        </svg>
+        kare.pkg
+      </span>
     </router-link>
 
     <div class="slotted">
@@ -20,7 +22,12 @@
 
 <script>
   export default {
-    name: 'SiteHeader'
+    name: 'SiteHeader',
+    methods: {
+      blurParent({target}) {
+        target.parentElement.blur();
+      }
+    }
   };
 </script>
 
@@ -46,7 +53,8 @@
     display: inline-block;
     padding: .4rem .75rem .55rem .75rem;
     text-decoration: none;
-    transition: color 100ms cubic-bezier(.4, 0, .2, 1);
+    transition: border-color 100ms cubic-bezier(.4, 0, .2, 1),
+                color 100ms cubic-bezier(.4, 0, .2, 1);
   }
 
   a:active,
@@ -67,20 +75,23 @@
   }
 
   #home {
-    align-items: center;
     border-color: white;
-    display: flex;
     letter-spacing: .05rem;
     margin-right: 1rem;
     padding-left: .6rem;
-    transition: none;
   }
 
-  #home > svg {
+  #home span {
+    align-items: center;
+    display: flex;
+  }
+
+  #home svg {
     fill: white;
     padding-bottom: .1rem;
     width: 1.5rem;
     margin-right: .4rem;
+    transition-duration: 125ms;
   }
 
   #home:active,
@@ -90,9 +101,9 @@
     color: #888;
   }
 
-  #home:active > svg,
-  #home:focus > svg,
-  #home:hover > svg {
+  #home:active svg,
+  #home:focus svg,
+  #home:hover svg {
     fill: #888;
   }
 </style>

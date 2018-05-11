@@ -81,6 +81,8 @@
     font-size: 10vw;
     justify-content: center;
     padding-bottom: .75vw;
+    transition: border-color 100ms cubic-bezier(.4, 0, .2, 1),
+                color 100ms cubic-bezier(.4, 0, .2, 1);
   }
 
   #newDrawing:active,
@@ -99,17 +101,18 @@
   }
 
   .control-shade {
-    background: rgba(0, 0, 0, .2);
+    background: black;
     height: 100%;
     position: absolute;
-    visibility: hidden;
+    opacity: 0;
+    transition: opacity 100ms cubic-bezier(.4, 0, .2, 1);
     width: 100%;
   }
 
   .thumbnail:active > .control-shade,
   .thumbnail:focus > .control-shade,
   .thumbnail:hover  > .control-shade {
-    visibility: visible;
+    opacity: .4;
   }
 
   .preview {
