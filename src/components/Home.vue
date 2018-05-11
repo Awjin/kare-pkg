@@ -53,8 +53,10 @@
         return `/edit/${idx}`;
       },
 
-      newDrawing() {
+      newDrawing({target}) {
+        target.blur();
         this.$store.commit('newDrawing');
+        this.$router.push('/edit/0');
       }
     }
   };

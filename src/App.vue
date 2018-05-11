@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade" mode="out-in" :duration="{leave: 500}">
+  <transition name="fade" mode="out-in">
     <router-view/>
   </transition>
 </template>
@@ -35,14 +35,14 @@
   .fade-enter,
   .fade-leave-to {
     opacity: 0;
-    transform: translateY(-100vh);
+    transform: scale(.9);
   }
 
   .fade-enter-active {
-    transition: all 300ms cubic-bezier(0, 0, .2, 1);
+    transition: all 225ms cubic-bezier(0, 0, .2, 1);
   }
 
   .fade-leave-active {
-    transition: all 250ms cubic-bezier(.4, 0, 1, 1);
+    transition: all 195ms cubic-bezier(.4, 0, 1, 1);
   }
 </style>

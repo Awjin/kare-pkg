@@ -2,25 +2,44 @@
   <div class="drawingBoard">
     <site-header>
       <div>
-        <button @click="undo" :disabled="isNotUndoable">
+        <a
+          @click="undoDrawing"
+          :disabled="isNotUndoable"
+          title="Undo stroke (cmd + z)"
+          >
           undo
-        </button>
+        </a>
 
-        <button @click="redo" :disabled="isNotRedoable">
+        <a
+          @click="redoDrawing"
+          :disabled="isNotRedoable"
+          title="Redo stroke (cmd + shift + z)"
+          >
           redo
-        </button>
+        </a>
 
-        <button @click="clear" :disabled="isNotClearable">
+        <a
+          @click="clearDrawing"
+          title="Clear pixels (cmd + x)"
+          >
           clear
-        </button>
+        </a>
 
-        <button @click="clear" :disabled="isNotClearable">
+        <a
+          @click="saveDrawing"
+          title="Download png (cmd + s)"
+          :href="imgSrc"
+          :download="`kare-pkg-${Date.now()}.png`"
+          >
           save
-        </button>
+        </a>
 
-        <button @click="clear" :disabled="isNotClearable">
+        <a
+          @click="deleteDrawing"
+          title="Delete drawing (cmd + delete)"
+          >
           delete
-        </button>
+        </a>
       </div>
     </site-header>
 
@@ -53,14 +72,6 @@
     },
 
     computed: {
-      isNotClearable() {
-        const pixels = this.$store.state.drawings[this.drawingIdx].pixels;
-        for (let pixelIdx in pixels) {
-          if (pixels[pixelIdx]) return false;
-        }
-        return true;
-      },
-
       isNotUndoable() {
         const history = this.$store.state.drawings[this.drawingIdx].history;
         return (history.currIdx < 0);
@@ -69,54 +80,109 @@
       isNotRedoable() {
         const history = this.$store.state.drawings[this.drawingIdx].history;
         return (history.currIdx >= history.actions.length - 1);
+      },
+
+      isNotClearable() {
+        const pixels = this.$store.state.drawings[this.drawingIdx].pixels;
+        for (let pixelIdx in pixels) {
+          if (pixels[pixelIdx]) return false;
+        }
+        return true;
+      },
+
+      imgSrc() {
+        return this.$store.state.drawings[this.drawingIdx].imgSrc;
       }
     },
 
     methods: {
-      clear({target}) {
+      clearDrawing({target}) {
         target.blur();
+        if (this.isNotClearable) return;
         this.$store.commit('clearDrawing', {drawingIdx: this.drawingIdx});
       },
 
-      undo({target}) {
+      undoDrawing({target}) {
         target.blur();
         this.$store.commit('undoDrawing', {drawingIdx: this.drawingIdx});
       },
 
-      redo({target}) {
+      redoDrawing({target}) {
         target.blur();
         this.$store.commit('redoDrawing', {drawingIdx: this.drawingIdx});
       },
 
-      keyboardShortcut(event) {
-        const redoShortcut =
-          (event.keyCode == 90 && event.ctrlKey && event.shiftKey) ||
-          (event.keyCode == 90 && event.metaKey && event.shiftKey);
+      saveDrawing({target}) {
+        target.blur();
+        console.log(this.$store.state.drawings[this.drawingIdx].imgSrc);
+      },
 
-        const undoShortcut =
-          (event.keyCode == 90 && event.ctrlKey) ||
-          (event.keyCode == 90 && event.metaKey);
+      deleteDrawing({target}) {
+        target.blur();
+        const result = window.confirm(`Are you sure? This can't be undone!`);
+        if (result) {
+          this.$store.commit('deleteDrawing', {drawingIdx: this.drawingIdx});
+          this.$router.push('/');
+        }
+      },
 
-        const clearShortcut =
-          (event.keyCode == 88 && event.ctrlKey) ||
-          (event.keyCode == 88 && event.metaKey);
+      keyboardShortcut() {
+        const refreshShortcut = 82;
+        const homeShortcut = 191;
+        const redoShortcut = 90;
+        const undoShortcut = 90;
+        const clearShortcut = 88;
+        const saveShortcut = 83;
+        const deleteShortcut = 8;
 
-        if (redoShortcut) {
-          this.redo(event);
-        } else if (undoShortcut) {
-          this.undo(event);
-        } else if (clearShortcut) {
-          this.clear(event);
+        return (event) => {
+          if (!event.ctrlKey && !event.metaKey) {
+            return;
+          }
+
+          if (event.shiftKey) {
+            if (event.keyCode === redoShortcut) {
+              event.preventDefault();
+              this.redoDrawing(event);
+            }
+            return;
+          }
+
+          switch(event.keyCode) {
+            case refreshShortcut:
+              // event.preventDefault();
+              break;
+            case homeShortcut:
+              event.preventDefault();
+              this.$router.push('/');
+              break;
+            case undoShortcut:
+              event.preventDefault();
+              this.undoDrawing(event);
+              break;
+            case clearShortcut:
+              event.preventDefault();
+              this.clearDrawing(event);
+              break;
+            case saveShortcut:
+              event.preventDefault();
+              this.saveDrawing(event);
+              break;
+            case deleteShortcut:
+              event.preventDefault();
+              this.deleteDrawing(event);
+              break;
+          }
         }
       }
     },
 
     created() {
-      window.addEventListener('keydown', this.keyboardShortcut);
+      window.addEventListener('keydown', this.keyboardShortcut());
     },
 
     destroyed() {
-      window.removeEventListener('keydown', this.keyboardShortcut);
+      window.removeEventListener('keydown', this.keyboardShortcut());
     }
   };
 </script>

@@ -32,6 +32,8 @@ export default new Vuex.Store({
           368: true, 400: true, 432: true
         },
 
+        imgSrc: '',
+
         history: {
           currIdx: -1,
           actions: []
@@ -84,6 +86,14 @@ export default new Vuex.Store({
           setPixel(state, drawingIdx, pixelIdx, false);
         }
       }
+    },
+
+    deleteDrawing(state, {drawingIdx}) {
+      this.state.drawings.splice(drawingIdx, 1);
+    },
+
+    updateImgSrc(state, {drawingIdx, imgSrc}) {
+      state.drawings[drawingIdx].imgSrc = imgSrc;
     }
   }
 })

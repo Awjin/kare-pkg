@@ -30,7 +30,7 @@
 
       imgSrc() {
         this.pixelsToCanvas;
-        return this.canvas.toDataURL('image/png');
+        return this.$store.state.drawings[this.drawingIdx].imgSrc;
       },
 
       pixelsToCanvas() {
@@ -49,6 +49,11 @@
             this.scale
           );
         }
+
+        this.$store.commit('updateImgSrc', {
+          drawingIdx: this.drawingIdx,
+          imgSrc: this.canvas.toDataURL('image/png')
+        });
       }
     },
 
