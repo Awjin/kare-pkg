@@ -20,6 +20,8 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
+store.commit('loadFromLocalStorage');
+
 new Vue({
   el: '#app',
   components: {App},

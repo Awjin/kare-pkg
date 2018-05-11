@@ -52,6 +52,8 @@ export default new Vuex.Store({
           actions: []
         }
       });
+
+      updateLocalStorage(state);
     },
 
     startAction(state, {drawingIdx}) {
@@ -60,6 +62,8 @@ export default new Vuex.Store({
 
     updateDrawing(state, {drawingIdx, pixelIdx, value}) {
       setPixel(state, drawingIdx, pixelIdx, value);
+
+      updateLocalStorage(state);
     },
 
     undoDrawing(state, {drawingIdx}) {
@@ -68,6 +72,8 @@ export default new Vuex.Store({
 
       togglePixels(state, drawingIdx);
       history.currIdx--;
+
+      updateLocalStorage(state);
     },
 
     redoDrawing(state, {drawingIdx}) {
@@ -76,6 +82,8 @@ export default new Vuex.Store({
 
       history.currIdx++;
       togglePixels(state, drawingIdx);
+
+      updateLocalStorage(state);
     },
 
     clearDrawing(state, {drawingIdx}) {
@@ -87,15 +95,28 @@ export default new Vuex.Store({
           setPixel(state, drawingIdx, pixelIdx, false);
         }
       }
+
+      updateLocalStorage(state);
     },
 
     deleteDrawing(state, {drawingIdx}) {
       this.state.drawings.splice(drawingIdx, 1);
+
+      updateLocalStorage(state);
     },
 
     updateImgSrc(state, {drawingIdx, imgSrc}) {
       state.drawings[drawingIdx].imgSrc = imgSrc;
-    }
+    },
+
+    loadFromLocalStorage(state) {
+      if(localStorage['kare-pkg']) {
+        const localDrawings = JSON.parse(localStorage['kare-pkg']).drawings;
+        Vue.set(state, 'drawings', localDrawings);
+      } else {
+        localStorage.setItem('kare-pkg', JSON.stringify(state));
+      }
+    },
   }
 })
 
@@ -122,4 +143,8 @@ function togglePixels(state, drawingIdx) {
   pixelsToToggle.forEach((pixelIdx) => {
     Vue.set(drawing.pixels, pixelIdx, !currFill);
   });
+}
+
+function updateLocalStorage(state) {
+  localStorage.setItem('kare-pkg', JSON.stringify(state));
 }
