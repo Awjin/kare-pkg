@@ -20,7 +20,7 @@
   html {
     background: black;
     color: white;
-    font: 13px / 1.5 'Andale Mono', 'Lucida Console', sans-serif;
+    font: 13px / 1.5 'Andale Mono', 'Lucida Console', monospace;
   }
 
   body > * {
