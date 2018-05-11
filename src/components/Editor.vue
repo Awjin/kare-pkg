@@ -95,7 +95,6 @@
 
 <style scoped>
   .editor {
-    border: 2px solid black;
     cursor: pointer;
     display: grid;
     grid-template-columns: repeat(32, 1fr);
@@ -104,8 +103,8 @@
 
   .pixel {
     background: white;
-    border-left: 1px solid #ccc;
-    border-top: 1px solid #ccc;
+    border-left: 1px solid #bbb;
+    border-top: 1px solid #bbb;
   }
 
   .pixel.filled {

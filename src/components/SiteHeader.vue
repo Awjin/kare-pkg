@@ -1,10 +1,10 @@
 <template>
   <div class="site-header">
-    <div class="header-inner">
-      <router-link to="/">
-        <button>KARE.pkg</button>
-      </router-link>
+    <router-link to="/">
+      <button id="home-button">KARE.pkg</button>
+    </router-link>
 
+    <div class="slotted">
       <slot></slot>
     </div>
   </div>
@@ -18,33 +18,25 @@
 
 <style scoped>
   .site-header {
-    background: black;
-    color: white;
-    padding: .5rem 1rem;
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    padding: 3vh 2vw;
     width: 100%;
   }
 
-  .header-inner {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin: auto;
-  }
-
-  a {
-    outline: none;
+  .slotted {
+    text-align: right;
   }
 
   button {
     background: black;
     border: 1px solid transparent;
-    border-radius: 5px;
+    border-radius: 4px;
     color: white;
     cursor: pointer;
-    letter-spacing: .05rem;
-    outline: none;
-    padding: .5rem .66rem .66rem .66rem;
-    transition: color .2s ease;
+    padding: .55rem .65rem .6rem .65rem;
+    transition: color 100ms cubic-bezier(.4, 0, .2, 1);
   }
 
   button:active,
@@ -54,7 +46,7 @@
   }
 
   button[disabled] {
-    color: #999;
+    color: #888;
     cursor: default;
   }
 
@@ -62,5 +54,19 @@
   button[disabled]:focus,
   button[disabled]:hover {
     border-color: transparent;
+  }
+
+  #home-button {
+    border-color: white;
+    letter-spacing: .05rem;
+    margin-right: 1rem;
+    transition: none;
+  }
+
+  #home-button:active,
+  #home-button:focus,
+  #home-button:hover {
+    border-color: #888;
+    color: #888;
   }
 </style>

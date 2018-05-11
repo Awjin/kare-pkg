@@ -13,6 +13,14 @@
         <button @click="clear" :disabled="isNotClearable">
           clear
         </button>
+
+        <button @click="clear" :disabled="isNotClearable">
+          save
+        </button>
+
+        <button @click="clear" :disabled="isNotClearable">
+          delete
+        </button>
       </div>
     </site-header>
 
@@ -117,7 +125,7 @@
   main {
     display: flex;
     justify-content: center;
-    padding: 3vmin;
+    padding: 1.5vmin 6vmin 6vmin 0;
   }
 
   main > * {
@@ -126,8 +134,8 @@
 
   .preview {
     height: 17vmin;
-    width: 17vmin;
     margin-right: 3vmin;
+    width: 17vmin;
   }
 
   .editor {

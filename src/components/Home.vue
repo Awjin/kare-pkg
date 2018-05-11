@@ -5,8 +5,14 @@
       </div>
     </site-header>
 
-    <div class="wrapper">
-      <a @click.prevent="newDrawing" id="new">+</a>
+    <div class="gallery">
+      <button
+        @click.prevent="newDrawing"
+        class="thumbnail"
+        id="newDrawing"
+        >
+        +
+      </button>
 
       <router-link
         v-for="(drawing, idx) in drawings"
@@ -18,7 +24,7 @@
 
         <preview :drawingIdx="idx" :key="Math.random()"></preview>
       </router-link>
-    </div class="wrapper">
+    </div>
   </div>
 </template>
 
@@ -55,20 +61,38 @@
 </script>
 
 <style scoped>
-  .home {
-    padding-bottom: 2vw;
-  }
-  .wrapper {
+  .gallery {
     display: flex;
     flex-wrap: wrap;
     padding: 1vw;
   }
 
+  #newDrawing {
+    align-items: center;
+    background: black;
+    box-shadow: none;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    font-size: 10vw;
+    justify-content: center;
+    padding-bottom: .75vw;
+  }
+
+  #newDrawing:active,
+  #newDrawing:focus,
+  #newDrawing:hover {
+    border-color: #888;
+    color: #888;
+  }
+
   .thumbnail {
-    outline: none;
-    position: relative;
     flex-shrink: 0;
+    height: 17.6vw;
     margin: 1vw;
+    position: relative;
     width: 17.6vw;
   }
 
@@ -86,28 +110,8 @@
     visibility: visible;
   }
 
-  #new {
-    align-items: center;
-    background: black;
-    border-radius: 100%;
-    color: white;
-    display: flex;
-    flex-shrink: 0;
-    font-size: 10vw;
-    height: 13.6vw;
-    justify-content: center;
-    margin: 3vw;
-    outline: none;
-    padding-bottom: 2.5vw;
-    padding-left: .4vw;
-    text-decoration: none;
-    user-select: none;
-    width: 13.6vw;
-  }
-
-  #new:active,
-  #new:focus,
-  #new:hover {
-    background: #999;
+  .preview {
+    height: 17.6vw;
+    width: 17.6vw;
   }
 </style>

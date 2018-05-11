@@ -80,7 +80,6 @@
 <style scoped>
   .preview {
     background: white;
-    border: 2px solid black;
   }
 
   img {
