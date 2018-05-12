@@ -122,8 +122,10 @@ export default new Vuex.Store({
 
 function newAction(state, drawingIdx) {
   const history = state.drawings[drawingIdx].history;
-  const pruneCount = history.actions.length - (history.currIdx + 1);
-  history.actions.splice(history.currIdx, pruneCount);
+  const pruneCount = (history.actions.length - 1) - history.currIdx;
+  if (pruneCount > 0) {
+    history.actions.splice(history.currIdx + 1, pruneCount);
+  }
   history.actions.push([]);
   history.currIdx++;
 }
