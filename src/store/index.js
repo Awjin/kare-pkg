@@ -62,7 +62,7 @@ export default new Vuex.Store({
 
     updateDrawing(state, {drawingIdx, pixelIdx, value}) {
       setPixel(state, drawingIdx, pixelIdx, value);
-
+      recordToggledPixel(state, drawingIdx, pixelIdx);
       updateLocalStorage(state);
     },
 
@@ -70,7 +70,7 @@ export default new Vuex.Store({
       const history = state.drawings[drawingIdx].history;
       if (history.currIdx < 0) return;
 
-      togglePixels(state, drawingIdx);
+      replayAction(state, drawingIdx);
       history.currIdx--;
 
       updateLocalStorage(state);
@@ -81,7 +81,7 @@ export default new Vuex.Store({
       if (history.currIdx >= history.actions.length - 1) return;
 
       history.currIdx++;
-      togglePixels(state, drawingIdx);
+      replayAction(state, drawingIdx);
 
       updateLocalStorage(state);
     },
@@ -93,6 +93,7 @@ export default new Vuex.Store({
       for (let pixelIdx in pixels) {
         if (pixels[pixelIdx]) {
           setPixel(state, drawingIdx, pixelIdx, false);
+          recordToggledPixel(state, drawingIdx, pixelIdx);
         }
       }
 
@@ -101,7 +102,6 @@ export default new Vuex.Store({
 
     deleteDrawing(state, {drawingIdx}) {
       this.state.drawings.splice(drawingIdx, 1);
-
       updateLocalStorage(state);
     },
 
@@ -129,19 +129,22 @@ function newAction(state, drawingIdx) {
 }
 
 function setPixel(state, drawingIdx, pixelIdx, value) {
-  const drawing = state.drawings[drawingIdx];
-  Vue.set(drawing.pixels, pixelIdx, value);
+  const pixels = state.drawings[drawingIdx].pixels;
+  Vue.set(pixels, pixelIdx, value);
+}
 
+function recordToggledPixel(state, drawingIdx, pixelIdx) {
+  const drawing = state.drawings[drawingIdx];
   const currAction = drawing.history.actions[drawing.history.currIdx];
   currAction.push(pixelIdx);
 }
 
-function togglePixels(state, drawingIdx) {
-  const drawing = state.drawings[drawingIdx]
+function replayAction(state, drawingIdx) {
+  const drawing = state.drawings[drawingIdx];
   const pixelsToToggle = drawing.history.actions[drawing.history.currIdx];
   const currFill = drawing.pixels[pixelsToToggle[0]];
   pixelsToToggle.forEach((pixelIdx) => {
-    Vue.set(drawing.pixels, pixelIdx, !currFill);
+    setPixel(state, drawingIdx, pixelIdx, !currFill);
   });
 }
 
