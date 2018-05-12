@@ -1,7 +1,7 @@
 {
-  "name": "kare-pkg",
+  "name": "Kare.pkg",
   "version": "1.0.0",
-  "description": "kare.pkg",
+  "description": "32x32 pixel art creator",
   "author": "awjin <awjinahn@gmail.com>",
   "private": true,
   "scripts": {
