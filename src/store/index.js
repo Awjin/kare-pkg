@@ -44,16 +44,17 @@ export default new Vuex.Store({
 
   mutations: {
     newDrawing(state) {
-      state.drawings.unshift({
-        pixels: {},
-        imgSrc: '',
-        history: {
-          currIdx: -1,
-          actions: []
-        }
+      unshiftDrawings(state, {});
+    },
+
+    importDrawings(state, {importedPixels}) {
+      const filteredPixels = importedPixels.filter((pixels) => {
+        return validatePixels(state, pixels);
       });
 
-      updateLocalStorage(state);
+      for (let i = filteredPixels.length - 1; i >= 0; i--) {
+        unshiftDrawings(state, filteredPixels[i]);
+      }
     },
 
     startAction(state, {drawingIdx}) {
@@ -120,6 +121,37 @@ export default new Vuex.Store({
   }
 })
 
+function unshiftDrawings(state, pixels) {
+  state.drawings.unshift({
+    pixels: pixels,
+    imgSrc: '',
+    history: {
+      currIdx: -1,
+      actions: []
+    }
+  });
+
+  updateLocalStorage(state);
+}
+
+function updateLocalStorage(state) {
+  localStorage.setItem('kare-pkg', JSON.stringify(state));
+}
+
+function validatePixels(state, pixels) {
+  const keys = Object.keys(pixels);
+  if (keys.length === 0) return false;
+
+  keys.forEach((key) => {
+    if (isNaN(key)) return false;
+    const keyNumber = parseFloat(key);
+    if (keyNumber !== parseInt(keyNumber)) return false;
+    if (keyNumber < 0 || keyNumber > 1023) return false;
+    if (typeof pixels[key] !== 'boolean') return false;
+  });
+  return true;
+}
+
 function newAction(state, drawingIdx) {
   const history = state.drawings[drawingIdx].history;
   const pruneCount = (history.actions.length - 1) - history.currIdx;
@@ -148,8 +180,4 @@ function replayAction(state, drawingIdx) {
   pixelsToToggle.forEach((pixelIdx) => {
     setPixel(state, drawingIdx, pixelIdx, !currFill);
   });
-}
-
-function updateLocalStorage(state) {
-  localStorage.setItem('kare-pkg', JSON.stringify(state));
 }

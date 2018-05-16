@@ -2,6 +2,27 @@
   <div class="home">
     <site-header>
       <div>
+        <a
+          title="Export backup (cmd + s)"
+          :href="exportSrc"
+          :download="`kare-pkg-backup-${Date.now()}.json`"
+          :disabled="isNotExportable"
+          >
+          export
+        </a>
+
+        <form>
+          <label for="file"><a>import</a></label>
+          <input
+            @change="importFile"
+            accept=".json"
+            hidden
+            id="file"
+            multiple="false"
+            title="Import backup (cmd + o)"
+            type="file"
+          >
+        </form>
       </div>
     </site-header>
 
@@ -48,6 +69,24 @@
       }
     },
 
+    computed: {
+      isNotExportable() {
+        return this.$store.state.drawings.length === 0;
+      },
+
+      exportSrc() {
+        const drawings = this.$store.state.drawings;
+        const jsonExport = [];
+
+        for (let drawing of drawings) {
+          jsonExport.push(drawing.pixels);
+        }
+
+        const str = JSON.stringify(jsonExport);
+        return `data:application/json;charset=utf-8,${encodeURIComponent(str)}`;
+      }
+    },
+
     methods: {
       getRoute(idx) {
         return `/edit/${idx}`;
@@ -57,6 +96,20 @@
         target.blur();
         this.$store.commit('newDrawing');
         this.$router.push('/edit/0');
+      },
+
+      importFile({target}) {
+        if (target.files.length === 0) return;
+
+        const fileReader = new FileReader();
+        fileReader.onload = ({target}) => {
+          this.$store.commit('importDrawings', {
+            importedPixels: JSON.parse(target.result)
+          });
+        };
+
+        fileReader.readAsText(target.files[0]);
+        target.parentElement.reset();
       }
     }
   };
@@ -118,5 +171,9 @@
   .preview {
     height: 17.6vw;
     width: 17.6vw;
+  }
+
+  form {
+    display: inline-block;
   }
 </style>
