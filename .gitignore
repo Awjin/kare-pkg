@@ -1,9 +1,6 @@
 .DS_Store
-build/
-node_modules/
-test/e2e/reports/
-test/unit/coverage/
+.env.*.local
+.env.local
+.vscode
+node_modules
 npm-debug.log*
-selenium-debug.log*
-yarn-debug.log*
-yarn-error.log*

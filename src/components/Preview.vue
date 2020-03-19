@@ -1,97 +1,26 @@
 <template>
-  <div class="preview">
-     <img :src="imgSrc">
-  </div>
+  <img class="preview" :src="preview" />
 </template>
 
-<script>
-  export default {
-    name: 'Preview',
+<script lang="ts">
+import {Component, Vue, Prop} from "vue-property-decorator";
 
-    props: [
-      'drawingIdx',
-      'propResolution',
-      'propScale'
-    ],
+@Component({
+  name: "Preview",
+})
+export default class Preview extends Vue {
+  @Prop()
+  readonly drawingIdx!: number;
 
-    data() {
-      return {
-        canvas: null,
-        resolution: this.propResolution || 32,
-        scale: this.propScale || 20,
-        pixels: this.$store.state.drawings[this.drawingIdx].pixels
-      }
-    },
-
-    computed: {
-      canvasSize() {
-        return this.resolution * this.scale;
-      },
-
-      imgSrc() {
-        this.drawPixelsToCanvas();
-        this.updateImgSrc();
-        return this.$store.state.drawings[this.drawingIdx].imgSrc;
-      }
-    },
-
-    methods: {
-      initCanvas() {
-        const canvas = document.createElement('canvas');
-        canvas.height = this.canvasSize;
-        canvas.width = this.canvasSize;
-
-        const context = canvas.getContext('2d');
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, this.canvasSize, this.canvasSize);
-        context.fillStyle = 'black';
-
-        this.canvas = canvas;
-      },
-
-      drawPixelsToCanvas() {
-        const context = this.canvas.getContext('2d');
-
-        for (let pixelIdx in this.pixels) {
-          context.fillStyle = (this.pixels[pixelIdx]) ? 'black' : 'white';
-
-          const col = pixelIdx % this.resolution;
-          const row = Math.floor(pixelIdx / this.resolution);
-
-          context.fillRect(
-            col * this.scale,
-            row * this.scale,
-            this.scale,
-            this.scale
-          );
-        }
-      },
-
-      updateImgSrc() {
-        this.$store.commit('updateImgSrc', {
-          drawingIdx: this.drawingIdx,
-          imgSrc: this.canvas.toDataURL('image/png')
-        });
-      }
-    },
-
-    created() {
-      this.initCanvas();
-    },
-
-    destroyed() {
-      this.canvas.remove();
-    }
-  };
+  get preview() {
+    return this.$store.state.drawings[this.drawingIdx].preview;
+  }
+}
 </script>
 
-<style scoped>
-  .preview {
-    background: white;
-    border: 1px solid white;
-  }
-
-  img {
-    width: 100%;
-  }
+<style lang="scss" scoped>
+.preview {
+  border: 1px solid #fff;
+  height: 100%;
+}
 </style>

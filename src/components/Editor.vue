@@ -1,126 +1,118 @@
 <template>
   <div
-    class="editor"
-    @mousedown.prevent="trackStart"
-    @touchstart.prevent="trackStart"
-    @mouseover.prevent="trackMove"
-    @touchmove.prevent="trackMove"
-    >
-    <div class="edit-area">
-      <div
-        v-for="i in 1024"
-        class="pixel"
-        :class="{filled: pixels[i - 1]}"
-        :data-pixel-idx="i - 1"
-        >
-      </div>
+    class="editor-wrapper"
+    @mousedown.prevent="startStroke"
+    @touchstart.prevent="startStroke"
+    @mouseover.prevent="continueStroke"
+    @touchmove.prevent="continueStroke"
+  >
+    <div class="edit-layer">
+      <div v-for="i in 1024" :key="i" class="pixel" :data-pixel-idx="i - 1"></div>
     </div>
+    <preview class="preview-layer" :drawingIdx="drawingIdx" />
   </div>
 </template>
 
-<script>
-  export default {
-    name: 'Editor',
+<script lang="ts">
+import {Component, Vue, Prop} from "vue-property-decorator";
+import {PixelMap, PixelIdx} from "@/store/drawing";
+import Preview from "@/components/Preview.vue";
 
-    props: [
-      'drawingIdx'
-    ],
+@Component({
+  name: "Editor",
+  components: {
+    Preview,
+  },
+})
+export default class Editor extends Vue {
+  @Prop()
+  drawingIdx!: number;
+  pixelMap: PixelMap = this.$store.state.drawings[this.drawingIdx].pixelMap;
+  isStroking = false;
+  stroke?: Event;
+  fill = false;
 
-    data () {
-      return {
-        pixels: this.$store.state.drawings[this.drawingIdx].pixels,
-        isDrawing: false,
-        isFilling: false
-      }
-    },
+  created() {
+    window.addEventListener("mouseup", this.endStroke);
+    window.addEventListener("touchcancel", this.endStroke);
+    window.addEventListener("touchend", this.endStroke);
+  }
 
-    methods: {
-      trackStart({target}) {
-        const idx = target.dataset.pixelIdx;
-        if (idx === undefined) return;
+  destroyed() {
+    window.removeEventListener("mouseup", this.endStroke);
+    window.removeEventListener("touchcancel", this.endStroke);
+    window.removeEventListener("touchend", this.endStroke);
+  }
 
-        this.isDrawing = true;
-        this.isFilling = !this.pixels[idx];
+  startStroke(event: Event) {
+    const pixelIdx = this.getPixelIdx(event);
+    if (!pixelIdx) return;
+    this.isStroking = true;
+    this.stroke = event;
+    this.fill = !this.pixelMap[pixelIdx];
+    this.flip(pixelIdx);
+  }
 
-        this.$store.commit('startAction', {drawingIdx: this.drawingIdx});
-        this.toggleFill(idx);
-      },
+  continueStroke(event: Event) {
+    if (!this.isStroking) return;
+    const pixelIdx = this.getPixelIdx(event);
+    if (!pixelIdx) return;
+    if (this.fill === !!this.pixelMap[pixelIdx]) return;
+    this.flip(pixelIdx);
+  }
 
-      toggleFill(pixelIdx) {
-        const shouldToggle = this.pixels[pixelIdx] != this.isFilling;
-        if (!shouldToggle) return;
+  endStroke() {
+    this.isStroking = false;
+  }
 
-        this.$store.commit('updateDrawing', {
-          drawingIdx: this.drawingIdx,
-          pixelIdx: pixelIdx,
-          value: this.isFilling
-        });
-      },
-
-      trackMove(event) {
-        if (!this.isDrawing) return;
-
-        const target = this.getTarget(event);
-        this.toggleFill(target.dataset.pixelIdx);
-      },
-
-      getTarget(event) {
-        if (event.type === 'touchmove') {
-          const currTouch = event.changedTouches[0];
-          return document.elementFromPoint(
-            currTouch.clientX,
-            currTouch.clientY
-          );
-        } else {
-          return event.target;
-        }
-      },
-
-      trackEnd() {
-        this.isDrawing = false;
-      }
-    },
-
-    created() {
-      window.addEventListener('mouseup', this.trackEnd);
-      window.addEventListener('touchcancel', this.trackEnd);
-      window.addEventListener('touchend', this.trackEnd);
-    },
-
-    destroyed() {
-      window.removeEventListener('mouseup', this.trackEnd);
-      window.removeEventListener('touchcancel', this.trackEnd);
-      window.removeEventListener('touchend', this.trackEnd);
+  getPixelIdx(event: Event): PixelIdx | undefined {
+    let target = event.target;
+    if (event.type === "touchmove") {
+      const touch = (event as TouchEvent).changedTouches[0];
+      target = document.elementFromPoint(
+        touch.clientX,
+        touch.clientY
+      ) as Element;
     }
-  };
+    return (target as HTMLElement).dataset.pixelIdx;
+  }
+
+  flip(pixelIdx: PixelIdx) {
+    this.$store.commit("flip", {
+      drawingIdx: this.drawingIdx,
+      pixelIdx,
+      event: this.stroke,
+    });
+  }
+}
 </script>
 
-<style scoped>
-  .editor {
-    background: white;
-    padding: 1px;
-  }
+<style lang="scss" scoped>
+.editor-wrapper {
+  background: #fff;
+  position: relative;
+}
 
-  .edit-area {
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: repeat(32, 1fr);
-    grid-template-rows: repeat(32, 1fr);
-    height: 100%;
-    width: 100%;
-    border-right: 1px solid #bbb;
-    border-bottom: 1px solid #bbb;
-
-  }
+.edit-layer {
+  border-left: 1px solid #bbb;
+  border-top: 1px solid #bbb;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: repeat(32, 1fr);
+  grid-template-rows: repeat(32, 1fr);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 100;
 
   .pixel {
-    background: white;
-    border-left: 1px solid #bbb;
-    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    border-right: 1px solid #bbb;
   }
+}
 
-  .pixel.filled {
-    background: black;
-    border-color: black;
-  }
+.preview-layer {
+  position: absolute;
+  z-index: 99;
+}
 </style>
