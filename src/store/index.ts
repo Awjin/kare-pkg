@@ -53,7 +53,8 @@ export default new Vuex.Store({
       const copy = new Drawing(
         Object.assign({}, drawing.pixelMap),
         drawing.strokes.slice(0, drawing.strokes.length),
-        drawing.currStroke);
+        drawing.currStroke
+      );
       state.drawings.unshift(copy);
       saveToLocal(state);
     },

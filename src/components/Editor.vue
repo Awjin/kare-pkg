@@ -7,7 +7,12 @@
     @touchmove.prevent="continueStroke"
   >
     <div class="edit-layer">
-      <div v-for="i in 1024" :key="i" class="pixel" :data-pixel-idx="i - 1"></div>
+      <div
+        v-for="i in 1024"
+        :key="i"
+        class="pixel"
+        :data-pixel-idx="i - 1"
+      ></div>
     </div>
     <preview class="preview-layer" :drawingIdx="drawingIdx" />
   </div>

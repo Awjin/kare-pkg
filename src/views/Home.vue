@@ -65,7 +65,7 @@ main {
 .thumbnail--new {
   background: #000;
   border: 1px solid #fff;
-  border-radius: 5px;
+  border-radius: 10px;
   color: #fff;
   font-size: 10vw;
   padding-bottom: 0.75vw;

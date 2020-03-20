@@ -3,7 +3,7 @@
     <a
       :href="exportFile"
       :disabled="!isExportable"
-      :download="`kare-pkg-export-${Date.now()}.json`"
+      :download="`kare-pkg-export-${(new Date()).toISOString()}.json`"
     >export</a>
     <form>
       <label for="file">

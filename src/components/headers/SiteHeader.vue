@@ -1,12 +1,7 @@
 <template>
   <header>
     <router-link to="/" id="home" title="home">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
         <path d="M0 0h24v24H0z" fill="none" />
       </svg>
@@ -29,7 +24,7 @@ export default class SiteHeader extends Vue {}
 
 <style lang="scss" scoped>
 header {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   justify-content: space-between;
   padding: 3vh 2vw;
@@ -46,8 +41,7 @@ a {
   border-radius: 4px;
   color: #fff;
   cursor: pointer;
-  display: inline-block;
-  padding: 0.5rem 0.85rem 0.6rem 0.85rem;
+  padding: 0.45rem 0.9rem 0.55rem 0.9rem;
   text-decoration: none;
   transition: opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
 

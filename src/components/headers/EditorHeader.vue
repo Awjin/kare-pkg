@@ -4,7 +4,7 @@
     <a @click="redo" :disabled="!isRedoable" title="Redo stroke (cmd + shift + z)">redo</a>
     <a @click="clear">clear</a>
     <a @click="copy">copy</a>
-    <a :href="preview" :download="`kare-pkg-${Date.now()}.png`">save</a>
+    <a :href="preview" :download="`kare-pkg-${(new Date()).toISOString()}.png`">save</a>
     <a @click="remove">delete</a>
   </site-header>
 </template>
