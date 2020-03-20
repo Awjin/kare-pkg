@@ -24,7 +24,7 @@ export default class SiteHeader extends Vue {}
 
 <style lang="scss" scoped>
 header {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   justify-content: space-between;
   padding: 3vh 2vw;
@@ -41,6 +41,8 @@ a {
   border-radius: 4px;
   color: #fff;
   cursor: pointer;
+  display: inline-block;
+  margin: 1px;
   padding: 0.45rem 0.9rem 0.55rem 0.9rem;
   text-decoration: none;
   transition: opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
