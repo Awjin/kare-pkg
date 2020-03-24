@@ -1,17 +1,30 @@
 <template>
   <site-header>
-    <a
-      :href="exportFile"
-      :disabled="!isExportable"
-      :download="`kare-pkg-export-${(new Date()).toISOString()}.json`"
-    >export</a>
-    <form>
-      <label for="file">
-        <a>import</a>
-      </label>
-      <input @change="importFile" accept=".json" hidden id="file" multiple="false" type="file" />
-    </form>
-    <a @click="removeAll">delete-all</a>
+    <template v-slot:left>
+      <a @click.prevent="newDrawing">+ CREATE</a>
+    </template>
+    <template v-slot:right>
+      <a
+        :href="exportFile"
+        :disabled="!isExportable"
+        :download="`kare-pkg-export-${new Date().toISOString()}.json`"
+        >export</a
+      >
+      <form>
+        <label for="file">
+          <a>import</a>
+        </label>
+        <input
+          @change="importFile"
+          accept=".json"
+          hidden
+          id="file"
+          multiple="false"
+          type="file"
+        />
+      </form>
+      <a @click="removeAll">delete all</a>
+    </template>
   </site-header>
 </template>
 
@@ -32,6 +45,11 @@ export default class HomeHeader extends Vue {
 
   get exportFile() {
     return this.$store.getters.exportUrl();
+  }
+
+  newDrawing() {
+    this.$store.commit("new");
+    this.$router.push("/edit/0");
   }
 
   importFile(event: InputEvent) {
@@ -58,9 +76,3 @@ export default class HomeHeader extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-form {
-  display: inline-block;
-}
-</style>

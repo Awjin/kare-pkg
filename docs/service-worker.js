@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/kare-pkg/precache-manifest.013333a106dd28010e773c21f41f3b7c.js"
+  "/kare-pkg/precache-manifest.31d6fb604e59a542ee26af34ceb6f345.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "kare.pkg"});

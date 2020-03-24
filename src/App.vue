@@ -13,30 +13,25 @@
 
 html {
   background: #000;
-  color: #fff;
-  font: 13px / 1.5 "Andale Mono", "Lucida Console", monospace;
+  font-family: "Andale Mono", "Lucida Console", monospace;
+  font-size: 15px;
 }
 
-body > * {
-  min-height: 100vh;
-}
-
-a,
-button {
+a {
   outline: none;
 }
 
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.95);
 }
 
 .fade-enter-active {
-  transition: all 200ms cubic-bezier(0, 0, 0.2, 1);
+  transition: all 175ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .fade-leave-active {
-  transition: all 150ms cubic-bezier(0.4, 0, 1, 1);
+  transition: all 125ms cubic-bezier(0.4, 0, 1, 1);
 }
 </style>

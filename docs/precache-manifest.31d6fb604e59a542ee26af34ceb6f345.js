@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "8cda81bdc7409add919c",
-    "url": "/kare-pkg/css/app.679358eb.css"
+    "revision": "64abfe8c31aa6893d6c7",
+    "url": "/kare-pkg/css/app.adbb56e6.css"
   },
   {
-    "revision": "560b8a38b53e81820c35",
+    "revision": "fd4ce833008be0a1fd17",
     "url": "/kare-pkg/css/chunk-vendors.391ed6f9.css"
   },
   {
-    "revision": "dfbc19ddb67cb65bde47f5e8be0fe0ea",
+    "revision": "100c65b7cb39a2bedf310a343bb7fb7f",
     "url": "/kare-pkg/index.html"
   },
   {
-    "revision": "8cda81bdc7409add919c",
-    "url": "/kare-pkg/js/app.67b7bdf7.js"
+    "revision": "64abfe8c31aa6893d6c7",
+    "url": "/kare-pkg/js/app.7125dba1.js"
   },
   {
-    "revision": "560b8a38b53e81820c35",
-    "url": "/kare-pkg/js/chunk-vendors.e8efd414.js"
+    "revision": "fd4ce833008be0a1fd17",
+    "url": "/kare-pkg/js/chunk-vendors.d32889ff.js"
   },
   {
     "revision": "ef38e98fdbd514fb0265e923b409e8dd",

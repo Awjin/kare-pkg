@@ -28,12 +28,13 @@ export default {
 main {
   display: flex;
   justify-content: center;
-  padding: 1.5vmin 6vmin 6vmin 0;
+  padding-top: 1vw;
 }
 
 .edit__preview {
   flex-shrink: 0;
   height: 17vmin;
+  margin-left: -6vmin;
   margin-right: 3vmin;
   width: 17vmin;
 }

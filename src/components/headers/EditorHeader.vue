@@ -1,11 +1,18 @@
 <template>
   <site-header>
-    <a @click="undo" :disabled="!isUndoable" title="Undo stroke (cmd + z)">undo</a>
-    <a @click="redo" :disabled="!isRedoable" title="Redo stroke (cmd + shift + z)">redo</a>
-    <a @click="clear">clear</a>
-    <a @click="copy">copy</a>
-    <a :href="preview" :download="`kare-pkg-${(new Date()).toISOString()}.png`">save</a>
-    <a @click="remove">delete</a>
+    <template v-slot:left>
+      <router-link to="/">&lt; BACK</router-link>
+    </template>
+    <template v-slot:right>
+      <a @click="undo" :disabled="!isUndoable" title="cmd + z">undo</a>
+      <a @click="redo" :disabled="!isRedoable" title="cmd + shift + z">redo</a>
+      <a @click="clear">clear</a>
+      <a @click="copy">copy</a>
+      <a :href="preview" :download="`kare-pkg-${new Date().toISOString()}.png`"
+        >download</a
+      >
+      <a @click="remove">delete</a>
+    </template>
   </site-header>
 </template>
 
