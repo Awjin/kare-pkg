@@ -98,5 +98,10 @@ export default new Vuex.Store({
       state.drawings.splice(0, state.drawings.length);
       saveToLocal(state);
     },
+
+    setDrawings(state, {drawings}) {
+      state.drawings = drawings;
+      saveToLocal(state);
+    },
   },
 });

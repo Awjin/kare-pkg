@@ -11,6 +11,7 @@ const PHYSICAL_PIXEL_RATIO = 20;
 class ClearEvent {}
 
 export class Drawing {
+  readonly id = Math.random();
   private strokeStart?: StrokeEvent;
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
