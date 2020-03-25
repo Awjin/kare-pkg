@@ -44,6 +44,14 @@ export class Drawing {
     return this.currStroke < this.strokes.length - 1;
   }
 
+  get exportFormat() {
+    return {
+      pixelMap: this.pixelMap,
+      strokes: this.strokes,
+      currStroke: this.currStroke,
+    };
+  }
+
   flip(pixelIdx: PixelIdx, event: StrokeEvent) {
     this.updatePixelMap(pixelIdx);
     this.updateHistory(pixelIdx, event);

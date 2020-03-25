@@ -8,7 +8,9 @@
       <a @click="redo" :disabled="!isRedoable" title="cmd + shift + z">redo</a>
       <a @click="clear">clear</a>
       <a @click="copy">copy</a>
-      <a :href="preview" :download="`kare-pkg-${new Date().toISOString()}.png`"
+      <a
+        :href="preview"
+        :download="`kare.pkg download ${new Date().toLocaleString()}.png`"
         >download</a
       >
       <a @click="remove">delete</a>

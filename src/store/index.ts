@@ -19,36 +19,39 @@ export default new Vuex.Store({
   },
 
   getters: {
-    exportUrl: state => (): string => {
+    exportFile: state => () => {
+      const drawingExports = JSON.stringify(
+        state.drawings.map(drawing => drawing.exportFormat)
+      );
       return (
         "data:application/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(state.drawings))
+        encodeURIComponent(drawingExports)
       );
     },
   },
 
   mutations: {
-    flip(state, {drawingIdx, pixelIdx, event}): void {
+    flip(state, {drawingIdx, pixelIdx, event}) {
       state.drawings[drawingIdx].flip(pixelIdx, event);
       saveToLocal(state);
     },
 
-    undo(state, {drawingIdx}): void {
+    undo(state, {drawingIdx}) {
       state.drawings[drawingIdx].undo();
       saveToLocal(state);
     },
 
-    redo(state, {drawingIdx}): void {
+    redo(state, {drawingIdx}) {
       state.drawings[drawingIdx].redo();
       saveToLocal(state);
     },
 
-    clear(state, {drawingIdx}): void {
+    clear(state, {drawingIdx}) {
       state.drawings[drawingIdx].clear();
       saveToLocal(state);
     },
 
-    copy(state, {drawingIdx}): void {
+    copy(state, {drawingIdx}) {
       const drawing = state.drawings[drawingIdx];
       const copy = new Drawing(
         Object.assign({}, drawing.pixelMap),

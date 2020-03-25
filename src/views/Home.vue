@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import HomeHeader from "@/components/headers/HomeHeader.vue";
+import HomeHeader from "@/components/HomeHeader.vue";
 import Preview from "@/components/Preview.vue";
 import {Drawing} from "@/store/drawing";
 import {Component, Vue} from "vue-property-decorator";

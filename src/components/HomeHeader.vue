@@ -7,7 +7,7 @@
       <a
         :href="exportFile"
         :disabled="!isExportable"
-        :download="`kare-pkg-export-${new Date().toISOString()}.json`"
+        :download="`kare.pkg backup ${new Date().toLocaleString()}.json`"
         >export</a
       >
       <form>
@@ -44,7 +44,7 @@ export default class HomeHeader extends Vue {
   }
 
   get exportFile() {
-    return this.$store.getters.exportUrl();
+    return this.$store.getters.exportFile();
   }
 
   newDrawing() {

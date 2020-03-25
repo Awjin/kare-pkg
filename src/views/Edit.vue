@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import EditorHeader from "@/components/headers/EditorHeader.vue";
+import EditorHeader from "@/components/EditorHeader.vue";
 import Preview from "@/components/Preview.vue";
 import Editor from "@/components/Editor.vue";
 
