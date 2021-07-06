@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "downlevelIteration": true,
+    "target": "esnext",
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
@@ -15,15 +15,10 @@
     "types": [
       "webpack-env"
     ],
-    "typeRoots": [
-      "types/vuedraggable",
-      "node_modules/@types"
-    ],
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "*" : ["types/*"]
+      ]
     },
     "lib": [
       "esnext",
@@ -37,8 +32,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "types/**/*.ts"
+    "tests/**/*.tsx"
   ],
   "exclude": [
     "node_modules"

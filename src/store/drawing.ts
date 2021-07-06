@@ -1,127 +1,213 @@
-export type PixelMap = Record<PixelIdx, PixelVal>;
-export type PixelIdx = string;
-type PixelVal = boolean;
+type UserAction = Event | null;
 
-type Stroke = PixelIdx[];
-type StrokeEvent = Event | ClearEvent;
+export interface DrawingExport {
+  pixels: number[];
+  history?: HistoryExport;
+}
 
-const RESOLUTION = 32;
-const PHYSICAL_PIXEL_RATIO = 20;
-
-class ClearEvent {}
+interface HistoryExport {
+  strokes: number[][];
+  currStroke: number;
+}
 
 export class Drawing {
-  readonly id = Math.random();
-  private strokeStart?: StrokeEvent;
-  private canvas: HTMLCanvasElement;
-  private context: CanvasRenderingContext2D;
-  public preview = "";
+  readonly id: number = Math.random();
 
-  constructor(
-    public pixelMap: PixelMap = {},
-    public strokes: Stroke[] = [],
-    public currStroke = -1
-  ) {
-    const canvasSize = RESOLUTION * PHYSICAL_PIXEL_RATIO;
-    this.canvas = document.createElement("canvas");
-    this.canvas.height = canvasSize;
-    this.canvas.width = canvasSize;
-    this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.context.fillStyle = "white";
-    this.context.fillRect(0, 0, canvasSize, canvasSize);
-    for (const pixelIdx in pixelMap) {
-      if (!pixelMap[pixelIdx]) continue;
-      this.updateCanvas(pixelIdx);
+  private readonly size: number;
+
+  private readonly pixels: Set<number>;
+
+  private readonly canvas: Canvas;
+
+  private readonly history: History;
+
+  private _preview = "";
+
+  constructor(options?: { size?: number; data?: DrawingExport }) {
+    this.size = options?.size ?? 32;
+
+    this.pixels = options?.data ? new Set(options.data.pixels) : new Set();
+
+    this.canvas = new Canvas(this.size);
+    for (const pixel of this.pixels) {
+      this.canvas.add(pixel);
     }
-    this.generatePreview();
+
+    this.history = options?.data?.history
+      ? new History({
+          data: {
+            strokes: options.data.history.strokes,
+            currStroke: options.data.history.currStroke,
+          },
+        })
+      : new History();
+
+    this.updatePreview();
   }
 
-  get canUndo() {
-    return this.currStroke >= 0;
+  get preview(): string {
+    return this._preview;
   }
 
-  get canRedo() {
-    return this.currStroke < this.strokes.length - 1;
+  get canUndo(): boolean {
+    return this.history.canUndo;
   }
 
-  get exportFormat() {
+  get canRedo(): boolean {
+    return this.history.canRedo;
+  }
+
+  get canClear(): boolean {
+    return this.pixels.size > 0;
+  }
+
+  isFilled(pixel: number): boolean {
+    return this.pixels.has(pixel);
+  }
+
+  update(pixel: number, action: UserAction): void {
+    if (pixel < 0 || pixel >= this.size * this.size) return;
+    this.flip(pixel);
+    this.history.record(pixel, action);
+    this.updatePreview();
+  }
+
+  clear(): void {
+    for (const pixel of this.pixels) {
+      this.flip(pixel);
+      this.history.record(pixel, null);
+    }
+    this.updatePreview();
+  }
+
+  undo(): void {
+    this.history.undo((pixel) => this.flip(pixel));
+    this.updatePreview();
+  }
+
+  redo(): void {
+    this.history.redo((pixel) => this.flip(pixel));
+    this.updatePreview();
+  }
+
+  export(): DrawingExport {
     return {
-      pixelMap: this.pixelMap,
-      strokes: this.strokes,
-      currStroke: this.currStroke,
+      pixels: Array.from(this.pixels),
+      history: this.history.export(),
     };
   }
 
-  flip(pixelIdx: PixelIdx, event: StrokeEvent) {
-    this.updatePixelMap(pixelIdx);
-    this.updateHistory(pixelIdx, event);
-    this.updateCanvas(pixelIdx);
-    this.generatePreview();
-  }
-
-  clear() {
-    const event = new ClearEvent();
-    for (const pixelIdx in this.pixelMap) {
-      if (!this.pixelMap[pixelIdx]) continue;
-      this.updatePixelMap(pixelIdx);
-      this.updateHistory(pixelIdx, event);
-      this.updateCanvas(pixelIdx);
+  private flip(pixel: number): void {
+    if (this.pixels.delete(pixel)) {
+      this.canvas.remove(pixel);
+    } else {
+      this.pixels.add(pixel);
+      this.canvas.add(pixel);
     }
-    this.generatePreview();
   }
 
-  undo() {
+  private updatePreview() {
+    this._preview = this.canvas.img;
+  }
+}
+
+class Canvas {
+  private readonly domCanvas: HTMLCanvasElement =
+    document.createElement("canvas");
+
+  private readonly domContext: CanvasRenderingContext2D =
+    this.domCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+  constructor(
+    private readonly widthInPixels: number,
+    private readonly pxPerPixel = 20
+  ) {
+    const canvasSize = this.widthInPixels * this.pxPerPixel;
+    this.domCanvas.height = canvasSize;
+    this.domCanvas.width = canvasSize;
+    this.domContext.fillStyle = "#fff";
+    this.domContext.fillRect(0, 0, canvasSize, canvasSize);
+  }
+
+  get img() {
+    return this.domCanvas.toDataURL("image/png");
+  }
+
+  add(pixel: number): void {
+    this.paint(pixel, "#000");
+  }
+
+  remove(pixel: number): void {
+    this.paint(pixel, "#fff");
+  }
+
+  private paint(pixel: number, color: "#000" | "#fff"): void {
+    const col = pixel % this.widthInPixels;
+    const row = Math.floor(pixel / this.widthInPixels);
+    this.domContext.fillStyle = color;
+    this.domContext.fillRect(
+      col * this.pxPerPixel,
+      row * this.pxPerPixel,
+      this.pxPerPixel,
+      this.pxPerPixel
+    );
+  }
+}
+
+class History {
+  private strokes: number[][];
+
+  private currStroke: number;
+
+  private currUserAction?: UserAction = undefined;
+
+  constructor(options?: { data?: HistoryExport }) {
+    this.strokes = options?.data?.strokes ?? [];
+    this.currStroke = options?.data?.currStroke ?? -1;
+  }
+
+  get canUndo(): boolean {
+    return this.currStroke >= 0;
+  }
+
+  get canRedo(): boolean {
+    return this.currStroke < this.strokes.length - 1;
+  }
+
+  undo(callback: (pixel: number) => void): void {
     if (!this.canUndo) return;
-    for (const pixelIdx of this.strokes[this.currStroke]) {
-      this.updatePixelMap(pixelIdx);
-      this.updateCanvas(pixelIdx);
+    for (const pixel of this.strokes[this.currStroke]) {
+      callback(pixel);
     }
     this.currStroke--;
-    this.generatePreview();
   }
 
-  redo() {
+  redo(callback: (pixel: number) => void): void {
     if (!this.canRedo) return;
     this.currStroke++;
-    for (const pixelIdx of this.strokes[this.currStroke]) {
-      this.updatePixelMap(pixelIdx);
-      this.updateCanvas(pixelIdx);
+    for (const pixel of this.strokes[this.currStroke]) {
+      callback(pixel);
     }
-    this.generatePreview();
   }
 
-  private updatePixelMap(pixelIdx: PixelIdx) {
-    this.pixelMap[pixelIdx] = !this.pixelMap[pixelIdx];
-  }
-
-  private updateHistory(pixelIdx: PixelIdx, event: StrokeEvent) {
-    if (event === this.strokeStart) {
-      this.strokes[this.currStroke].push(pixelIdx);
+  record(pixel: number, action: UserAction): void {
+    if (action === this.currUserAction) {
+      this.strokes[this.currStroke].push(pixel);
     } else {
+      this.currUserAction = action;
       this.currStroke++;
-      this.strokeStart = event;
-      this.strokes[this.currStroke] = [pixelIdx];
+      this.strokes[this.currStroke] = [pixel];
     }
 
-    if (this.currStroke < this.strokes.length - 1) {
+    if (this.strokes.length > this.currStroke + 1) {
       this.strokes = this.strokes.slice(0, this.currStroke + 1);
     }
   }
 
-  private updateCanvas(pixelIdx: PixelIdx) {
-    const idx = parseInt(pixelIdx);
-    const col = idx % RESOLUTION;
-    const row = Math.floor(idx / RESOLUTION);
-    this.context.fillStyle = this.pixelMap[pixelIdx] ? "black" : "white";
-    this.context.fillRect(
-      col * PHYSICAL_PIXEL_RATIO,
-      row * PHYSICAL_PIXEL_RATIO,
-      PHYSICAL_PIXEL_RATIO,
-      PHYSICAL_PIXEL_RATIO
-    );
-  }
-
-  private generatePreview() {
-    this.preview = this.canvas.toDataURL("image/png");
+  export(): HistoryExport {
+    return {
+      strokes: this.strokes,
+      currStroke: this.currStroke,
+    };
   }
 }

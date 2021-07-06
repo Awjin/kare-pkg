@@ -1,24 +1,12 @@
-import Vue from "vue";
+import "normalize.css";
+import { createApp } from "vue";
+
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import {register} from "register-service-worker";
-import "normalize.css";
 
-if (process.env.NODE_ENV === "production") {
-  register(`${process.env.BASE_URL}service-worker.js`);
-}
+window.oncontextmenu = (event: Event) => event.preventDefault();
+window.onbeforeunload = () => store.commit("saveToLocalStorage");
 
-window.oncontextmenu = (event: Event) => {
-  event.preventDefault();
-  event.stopPropagation();
-  return false;
-};
-
-store.commit("load");
-
-new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount("#app");
+store.commit("loadFromLocalStorage");
+createApp(App).use(store).use(router).mount("#app");

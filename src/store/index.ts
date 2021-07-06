@@ -1,110 +1,90 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import {Drawing} from "./drawing";
-import {kareWatch} from "./drawing-examples";
+import { createStore } from "vuex";
 
-Vue.use(Vuex);
+import { Drawing, DrawingExport } from "./drawing";
+import { watch } from "./sample-drawings/watch";
 
 interface State {
   drawings: Drawing[];
 }
 
-function saveToLocal(state: State) {
-  localStorage.setItem("kare-pkg", JSON.stringify(state));
-}
-
-export default new Vuex.Store({
+export default createStore({
   state: {
-    drawings: [new Drawing(kareWatch)],
+    drawings: [new Drawing({ data: watch })],
   },
 
   getters: {
-    exportFile: state => () => {
-      const drawingExports = JSON.stringify(
-        state.drawings.map(drawing => drawing.exportFormat)
-      );
-      return (
-        "data:application/json;charset=utf-8," +
-        encodeURIComponent(drawingExports)
-      );
+    uriForDrawingsExport: (state: State) => {
+      return `data:application/json;charset=utf-8,${encodeURIComponent(
+        JSON.stringify(state.drawings.map((drawing) => drawing.export()))
+      )}
+      `;
     },
   },
 
   mutations: {
-    flip(state, {drawingIdx, pixelIdx, event}) {
-      state.drawings[drawingIdx].flip(pixelIdx, event);
-      saveToLocal(state);
+    flip(
+      state: State,
+      options: { drawing: number; pixel: number; event: Event }
+    ): void {
+      state.drawings[options.drawing].update(options.pixel, options.event);
     },
 
-    undo(state, {drawingIdx}) {
-      state.drawings[drawingIdx].undo();
-      saveToLocal(state);
+    undo(state: State, options: { drawing: number }): void {
+      state.drawings[options.drawing].undo();
     },
 
-    redo(state, {drawingIdx}) {
-      state.drawings[drawingIdx].redo();
-      saveToLocal(state);
+    redo(state: State, options: { drawing: number }): void {
+      state.drawings[options.drawing].redo();
     },
 
-    clear(state, {drawingIdx}) {
-      state.drawings[drawingIdx].clear();
-      saveToLocal(state);
+    clear(state: State, options: { drawing: number }): void {
+      state.drawings[options.drawing].clear();
     },
 
-    copy(state, {drawingIdx}) {
-      const drawing = state.drawings[drawingIdx];
-      const copy = new Drawing(
-        Object.assign({}, drawing.pixelMap),
-        drawing.strokes.slice(0, drawing.strokes.length),
-        drawing.currStroke
-      );
+    copyDrawing(state: State, options: { drawing: number }): void {
+      const original = state.drawings[options.drawing].export();
+      const copy = new Drawing({ data: original });
       state.drawings.unshift(copy);
-      saveToLocal(state);
     },
 
-    new(state) {
+    newDrawing(state: State): void {
       state.drawings.unshift(new Drawing());
-      saveToLocal(state);
     },
 
-    remove(state, {drawingIdx}) {
-      state.drawings.splice(drawingIdx, 1);
-      saveToLocal(state);
+    deleteDrawing(state: State, options: { drawing: number }): void {
+      state.drawings.splice(options.drawing, 1);
     },
 
-    load(state) {
+    deleteAllDrawings(state: State): void {
+      state.drawings.splice(0, state.drawings.length);
+    },
+
+    saveToLocalStorage(state: State): void {
+      const drawingExports = state.drawings.map((drawing) => drawing.export());
+      localStorage.setItem("kare-pkg", JSON.stringify(drawingExports));
+    },
+
+    loadFromLocalStorage(state: State): void {
       if (!localStorage["kare-pkg"]) return;
-      const drawings = JSON.parse(localStorage["kare-pkg"]).drawings;
-      state.drawings = drawings.map(
-        (drawing: Drawing) =>
-          new Drawing(drawing.pixelMap, drawing.strokes, drawing.currStroke)
+      const drawingExports = JSON.parse(localStorage["kare-pkg"]);
+      state.drawings = drawingExports.map(
+        (drawingExport: DrawingExport) => new Drawing({ data: drawingExport })
       );
     },
 
-    import(state, {drawings}) {
-      for (let i = drawings.length - 1; i >= 0; i--) {
+    loadFromExport(state, options: { export: File }): void {
+      const drawingExports = JSON.parse(options.export.toString());
+      for (let i = drawingExports.length - 1; i >= 0; i--) {
         try {
-          const drawing = new Drawing(
-            drawings[i].pixelMap,
-            drawings[i].strokes,
-            drawings[i].currStroke
-          );
-          state.drawings.unshift(drawing);
-        } catch (e) {
-          /* meh */
+          state.drawings.unshift(new Drawing({ data: drawingExports[i] }));
+        } catch {
+          /* no-op */
         }
       }
-      saveToLocal(state);
     },
 
-    removeAll(state) {
-      state.drawings.splice(0, state.drawings.length);
-      saveToLocal(state);
-    },
-
-    setDrawings(state, {drawings}) {
+    setDrawings(state, drawings: Drawing[]): void {
       state.drawings = drawings;
-      saveToLocal(state);
     },
   },
 });
